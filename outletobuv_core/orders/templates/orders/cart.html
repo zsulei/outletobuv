@@ -1,0 +1,11 @@
+{% extends "products/base.html" %}
+{% block content %}
+    <h1>Корзина</h1>
+    <ul>
+    {% for product in products %}
+        {% comment %} <li>{{ product.name }} - Количество: {{ cart[product.id].quantity }}</li> {% endcomment %}
+        {{ product.article }} {{ product.size }}
+    {% endfor %}
+    </ul>
+    <p>Общая сумма: {{ total_price }}</p>
+{% endblock %}

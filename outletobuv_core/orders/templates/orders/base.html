@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myshop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/all.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<style>
+    a{
+        color: black;
+        text-decoration: none;
+    }
+
+    a:hover{
+        color: green
+    }
+
+</style>
+
+<body>
+
+
+    <nav>
+        <div class="logo">
+            <a href="{% url 'index' %}"><h2>myShop</h2></a>
+
+        </div>
+
+
+        <div class="cart">
+            <h3>{{request.user.username}}</h3>
+
+            {% if request.user.is_authenticated %}
+            {% else %}
+            {% endif %}
+
+
+
+            <a href="{% url 'orders:cart' %}" style="color:white; text-decoration:none">
+                 <div class="cart-container">
+
+                    <div class="cartitems"><p id="num_of_items">{{cart.num_of_items}}</p></div>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            </a>
+
+
+
+
+        </div>
+
+
+    </nav>
+
+
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+       {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+     {% block content %}
+
+     {% endblock content %}
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+   <script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+
+
+
+
+
+let btns = document.querySelectorAll(".productContainer button")
+
+btns.forEach(btn=>{
+    btn.addEventListener("click", addToCart)
+})
+
+function addToCart(e){
+    let product_id = e.target.value
+    let url = "/add_to_cart"
+
+    let data = {id:product_id}
+
+    fetch(url, {
+        method: "POST",
+        headers: {"Content-Type":"application/json", 'X-CSRFToken': csrftoken},
+        body: JSON.stringify(data)
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("num_of_items").innerHTML = data
+        console.log(data)
+    })
+    .catch(error=>{
+        console.log(error)
+    })
+}
+    </script>
+</body>
+</html>
